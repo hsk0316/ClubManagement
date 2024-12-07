@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 동아리 관리 프로그램
  *
@@ -7,19 +10,22 @@
  * </p>
  *
  * @author 한승규
- * @version 1.0
+ * @version 1.1
  * @since 2024-12-04
  *
  * @created 2024-12-01
- * @lastModified 2024-12-04
+ * @lastModified 2024-12-07
  *
  * @changelog
  * <ul>
  *   <li>2024-12-01: 최초 생성 (한승규)</li>
  *   <li>2024-12-04: 메인 메소드와 기본 클래스 구조 추가 (한승규)</li>
+ *   <li>2024-12-07: 동아리 및 보고서 관리 리스트 추가, 관련 메소드 구현 (한승규)</li>
  * </ul>
  */
 public class ClubManager {
+    private final List<Club> clubs = new ArrayList<>(); // 동아리 목록
+    private final List<ActivityReport> reports = new ArrayList<>(); // 활동 보고서 목록
 
     /**
      * 프로그램의 진입점 메소드입니다.
@@ -58,15 +64,17 @@ public class ClubManager {
      * @param purpose 설립 목적
      *
      * @created 2024-12-04
-     * @lastModified 2024-12-04
+     * @lastModified 2024-12-07
      *
      * @changelog
      * <ul>
      *   <li>2024-12-04: 동아리 등록 메소드 추가 (한승규)</li>
+     *   <li>2024-12-07: 동아리 관리 리스트와 연동 (한승규)</li>
      * </ul>
      */
     public void registerClub(String name, String advisor, int memberCount, String purpose) {
-        // 구현 로직
+        clubs.add(new Club(name, advisor, memberCount, purpose));
+        System.out.println("동아리가 등록되었습니다: " + name);
     }
 
     /**
@@ -78,15 +86,23 @@ public class ClubManager {
      * </p>
      *
      * @created 2024-12-04
-     * @lastModified 2024-12-04
+     * @lastModified 2024-12-07
      *
      * @changelog
      * <ul>
      *   <li>2024-12-04: 동아리 조회 메소드 추가 (한승규)</li>
+     *   <li>2024-12-07: 리스트 출력 로직 추가 (한승규)</li>
      * </ul>
      */
     public void viewClubs() {
-        // 구현 로직
+        if (clubs.isEmpty()) {
+            System.out.println("등록된 동아리가 없습니다.");
+            return;
+        }
+        System.out.println("==== 동아리 목록 ====");
+        for (Club club : clubs) {
+            System.out.println(club.getDetails());
+        }
     }
 
     /**
@@ -100,15 +116,23 @@ public class ClubManager {
      * @param activityContent 활동 내용
      *
      * @created 2024-12-04
-     * @lastModified 2024-12-04
+     * @lastModified 2024-12-07
      *
      * @changelog
      * <ul>
      *   <li>2024-12-04: 활동 보고서 작성 메소드 추가 (한승규)</li>
+     *   <li>2024-12-07: 리스트에 보고서 추가 로직 작성 (한승규)</li>
      * </ul>
      */
     public void addReport(String clubName, String activityContent) {
-        // 구현 로직 추가
+        for (Club club : clubs) {
+            if (club.getName().equals(clubName)) {
+                reports.add(new ActivityReport(clubName, activityContent));
+                System.out.println("활동 보고서가 작성되었습니다.");
+                return;
+            }
+        }
+        System.out.println("동아리를 찾을 수 없습니다: " + clubName);
     }
 
     /**
@@ -120,14 +144,22 @@ public class ClubManager {
      * </p>
      *
      * @created 2024-12-04
-     * @lastModified 2024-12-04
+     * @lastModified 2024-12-07
      *
      * @changelog
      * <ul>
      *   <li>2024-12-04: 활동 보고서 조회 메소드 추가 (한승규)</li>
+     *   <li>2024-12-07: 리스트 출력 로직 추가 (한승규)</li>
      * </ul>
      */
     public void viewReports() {
-        // 구현 로직
+        if (reports.isEmpty()) {
+            System.out.println("작성된 활동 보고서가 없습니다.");
+            return;
+        }
+        System.out.println("==== 활동 보고서 목록 ====");
+        for (ActivityReport report : reports) {
+            System.out.println(report.getReportDetails());
+        }
     }
 }
