@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * 활동 보고서를 저장하는 클래스입니다.
  *
@@ -7,19 +9,22 @@
  * </p>
  *
  * @author 한승규
- * @version 1.1
+ * @version 1.2
  * @since 2024-12-06
  *
  * @created 2024-12-06
- * @lastModified 2024-12-07
+ * @lastModified 2024-12-08
  *
  * @changelog
  * <ul>
  *   <li>2024-12-06: 최초 생성 (한승규)</li>
  *   <li>2024-12-07: getReportDetails 메서드 추가 (한승규)</li>
+ *   <li>2024-12-08: Serializable 인터페이스 구현 및 직렬화 ID 추가 (한승규)</li>
  * </ul>
  */
-public class ActivityReport {
+public class ActivityReport implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String clubName; // 동아리 이름
     private String activityContent; // 활동 내용
 
@@ -80,11 +85,12 @@ public class ActivityReport {
      * @return 활동 보고서 정보 문자열
      *
      * @created 2024-12-07
-     * @lastModified 2024-12-07
+     * @lastModified 2024-12-08
      *
      * @changelog
      * <ul>
      *   <li>2024-12-07: 메서드 추가 (한승규)</li>
+     *   <li>2024-12-08: Serializable 구현에 따른 변경 (한승규)</li>
      * </ul>
      */
     public String getReportDetails() {

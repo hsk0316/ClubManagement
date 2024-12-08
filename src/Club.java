@@ -1,24 +1,30 @@
+import java.io.Serializable;
+
 /**
  * 동아리 정보를 저장하는 클래스입니다.
  *
  * <p>
  * 이 클래스는 동아리 이름, 지도 교수, 회원 수, 설립 목적과 같은 동아리의 기본 정보를 관리합니다.
+ * 직렬화를 지원하여 데이터를 파일에 저장하거나 불러올 수 있습니다.
  * </p>
  *
  * @author 한승규
- * @version 1.1
+ * @version 1.2
  * @since 2024-12-06
  *
  * @created 2024-12-06
- * @lastModified 2024-12-07
+ * @lastModified 2024-12-08
  *
  * @changelog
  * <ul>
  *   <li>2024-12-06: 최초 생성 (한승규)</li>
  *   <li>2024-12-07: getDetails 메서드 추가 및 전체 코드 개선 (한승규)</li>
+ *   <li>2024-12-08: Serializable 인터페이스 추가 (한승규)</li>
  * </ul>
  */
-public class Club {
+public class Club implements Serializable {
+    private static final long serialVersionUID = 1L; // 직렬화 고유 ID
+
     private String name;
     private String advisor;
     private int memberCount;
