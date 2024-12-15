@@ -8,14 +8,15 @@ import java.util.List;
  * <p>
  * 이 클래스는 동아리와 활동 보고서를 관리하는 역할을 합니다.
  * 동아리 등록, 조회, 활동 보고서 작성 및 조회, 데이터 저장/불러오기 기능을 제공합니다.
+ * GUI를 위한 텍스트 데이터를 반환하는 메서드도 추가되었습니다.
  * </p>
  *
  * @author 한승규
- * @version 1.2.0
+ * @version 1.3.0
  * @since 2024-12-04
  *
  * @created 2024-12-01
- * @lastModified 2024-12-08
+ * @lastModified 2024-12-15
  *
  * @changelog
  * <ul>
@@ -23,6 +24,7 @@ import java.util.List;
  *   <li>2024-12-04: 메인 메소드와 기본 클래스 구조 추가 (한승규)</li>
  *   <li>2024-12-07: 동아리 및 보고서 관리 리스트 추가, 관련 메소드 구현 (한승규)</li>
  *   <li>2024-12-08: 데이터 저장 및 불러오기 메서드 구현 (한승규)</li>
+ *   <li>2024-12-15: GUI를 위한 문자열 반환 메서드 추가 (한승규)</li>
  * </ul>
  */
 public class ClubManager {
@@ -69,12 +71,12 @@ public class ClubManager {
      * @param purpose 설립 목적
      *
      * @created 2024-12-04
-     * @lastModified 2024-12-07
+     * @lastModified 2024-12-15
      *
      * @changelog
      * <ul>
      *   <li>2024-12-04: 동아리 등록 메소드 추가 (한승규)</li>
-     *   <li>2024-12-07: 동아리 관리 리스트와 연동 (한승규)</li>
+     *   <li>2024-12-15: 데이터 관리 리스트 업데이트 (한승규)</li>
      * </ul>
      */
     public void registerClub(String name, String advisor, int memberCount, String purpose) {
@@ -177,11 +179,12 @@ public class ClubManager {
      * </p>
      *
      * @created 2024-12-08
-     * @lastModified 2024-12-08
+     * @lastModified 2024-12-15
      *
      * @changelog
      * <ul>
      *   <li>2024-12-08: 데이터 저장 메서드 구현 (한승규)</li>
+     *   <li>2024-12-15: GUI 연동 추가 (한승규)</li>
      * </ul>
      */
     public void saveData() {
@@ -226,5 +229,32 @@ public class ClubManager {
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("데이터 불러오기 중 오류가 발생했습니다: " + e.getMessage());
         }
+    }
+
+    /**
+     * 등록된 동아리 목록을 문자열로 반환합니다.
+     *
+     * <p>
+     * GUI에서 사용하기 위한 문자열 형태의 동아리 목록을 반환합니다.
+     * 등록된 동아리가 없으면 '등록된 동아리가 없습니다.' 메시지를 반환합니다.
+     * </p>
+     *
+     * @return 등록된 동아리 목록 문자열
+     *
+     * @created 2024-12-15
+     * @lastModified 2024-12-15
+     *
+     * @changelog
+     * <ul>
+     *   <li>2024-12-15: GUI를 위한 메서드 추가 (한승규)</li>
+     * </ul>
+     */
+    public String viewClubsAsString() {
+        if (clubs.isEmpty()) return "등록된 동아리가 없습니다.";
+        StringBuilder sb = new StringBuilder("==== 동아리 목록 ====\n");
+        for (Club club : clubs) {
+            sb.append(club.getDetails()).append("\n");
+        }
+        return sb.toString();
     }
 }

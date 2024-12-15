@@ -1,25 +1,27 @@
 import java.util.Scanner;
+import javax.swing.SwingUtilities;
 
 /**
  * 동아리 관리 프로그램의 메인 클래스입니다.
  *
  * <p>
- * 이 클래스는 프로그램의 진입점 역할을 하며, 사용자와 상호작용하는 메뉴를 제공합니다.
+ * 이 클래스는 프로그램의 진입점 역할을 하며, GUI와 콘솔을 통해 사용자와 상호작용하는 메뉴를 제공합니다.
  * 프로그램 시작과 종료 시 데이터를 자동으로 저장하고 불러오는 기능을 포함합니다.
  * </p>
  *
  * @author 한승규
- * @version 1.2.0
+ * @version 1.3.0
  * @since 2024-12-04
  *
  * @created 2024-12-04
- * @lastModified 2024-12-08
+ * @lastModified 2024-12-15
  *
  * @changelog
  * <ul>
  *   <li>2024-12-04: 최초 생성 (한승규)</li>
  *   <li>2024-12-05: 메소드 세부 구현 (한승규)</li>
  *   <li>2024-12-08: 프로그램 시작 및 종료 시 데이터 자동 저장/불러오기 추가 (한승규)</li>
+ *   <li>2024-12-15: Swing GUI 통합 및 SwingUtilities 활용 (한승규)</li>
  * </ul>
  */
 public class Main {
@@ -30,16 +32,17 @@ public class Main {
      * 프로그램의 진입점 메소드입니다.
      *
      * <p>
-     * 프로그램 시작 시 데이터를 불러오고, 종료 시 데이터를 저장합니다.
+     * 프로그램 시작 시 데이터를 불러오고, Swing GUI를 실행합니다. 종료 시 데이터를 저장합니다.
      * 메인 메뉴를 통해 사용자 입력에 따라 동작을 수행합니다.
      * </p>
      *
      * @param args 명령행 인자를 전달받는 배열
      *
      * @created 2024-12-04
-     * @lastModified 2024-12-08
+     * @lastModified 2024-12-15
      */
     public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new ClubManagementGUI(clubManager)); // GUI 실행
         clubManager.loadData(); // 프로그램 시작 시 데이터 불러오기
         boolean isRunning = true;
 
@@ -192,3 +195,4 @@ public class Main {
         clubManager.loadData();
     }
 }
+
