@@ -11,19 +11,21 @@ import java.awt.event.ActionEvent;
  * </p>
  *
  * @author 한승규
- * @version 1.0.0
+ * @version 1.1.0
  * @since 2024-12-15
  *
  * @created 2024-12-15
+ * @lastModified 2024-12-16
  *
  * @changelog
  * <ul>
- *   <li>2024-12-15: 최초 생성 및 기본 GUI 구현, 동아리 등록, 조회, 저장, 불러오기 버튼 추가 및 기능 구현 (한승규)</li>
+ *   <li>2024-12-15: 최초 생성 및 기본 GUI 구현, 동아리 등록, 조회, 저장, 불러오기 버튼 추가 (한승규)</li>
+ *   <li>2024-12-16: 프로그램 종료 버튼 추가 및 GUI 개선 (한승규)</li>
  * </ul>
  */
 public class ClubManagementGUI {
-    private JFrame frame;
-    private ClubManager clubManager;
+    private JFrame frame; // GUI 메인 프레임
+    private ClubManager clubManager; // 동아리 관리 객체
 
     /**
      * ClubManagementGUI 생성자
@@ -51,7 +53,7 @@ public class ClubManagementGUI {
      * GUI 컴포넌트를 초기화하고 설정합니다.
      *
      * <p>
-     * 버튼 및 패널을 생성하고, 버튼 이벤트를 연결합니다.
+     * 버튼 및 패널을 생성하고, 각 버튼에 이벤트를 연결합니다.
      * </p>
      */
     private void setupComponents() {
@@ -62,18 +64,21 @@ public class ClubManagementGUI {
         JButton viewButton = new JButton("동아리 조회");
         JButton saveButton = new JButton("저장");
         JButton loadButton = new JButton("불러오기");
+        JButton exitButton = new JButton("프로그램 종료");
 
         // 버튼 이벤트 추가
         registerButton.addActionListener(this::registerClub);
         viewButton.addActionListener(this::viewClubs);
         saveButton.addActionListener(e -> clubManager.saveData());
         loadButton.addActionListener(e -> clubManager.loadData());
+        exitButton.addActionListener(e -> System.exit(0)); // 프로그램 종료 버튼
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(registerButton);
         buttonPanel.add(viewButton);
         buttonPanel.add(saveButton);
         buttonPanel.add(loadButton);
+        buttonPanel.add(exitButton);
 
         panel.add(buttonPanel, BorderLayout.NORTH);
 
@@ -85,6 +90,7 @@ public class ClubManagementGUI {
      *
      * <p>
      * 사용자가 동아리 등록 버튼을 클릭하면 동아리 정보를 입력받아 등록합니다.
+     * 입력값에 숫자가 아닌 값이 들어갈 경우 오류 메시지를 표시합니다.
      * </p>
      *
      * @param e ActionEvent 객체
@@ -113,7 +119,7 @@ public class ClubManagementGUI {
      */
     private void viewClubs(ActionEvent e) {
         JTextArea textArea = new JTextArea(20, 40);
-        textArea.setText(clubManager.viewClubsAsString()); // ClubManager에서 viewClubsAsString 메서드 추가 필요
+        textArea.setText(clubManager.viewClubsAsString()); // ClubManager에서 viewClubsAsString 메서드 필요
         textArea.setEditable(false);
         JOptionPane.showMessageDialog(frame, new JScrollPane(textArea), "동아리 목록", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -131,3 +137,4 @@ public class ClubManagementGUI {
         SwingUtilities.invokeLater(() -> new ClubManagementGUI(new ClubManager()));
     }
 }
+
