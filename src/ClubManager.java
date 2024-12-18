@@ -12,11 +12,11 @@ import java.util.List;
  * </p>
  *
  * @author 한승규
- * @version 1.3.0
+ * @version 1.4.0
  * @since 2024-12-04
  *
  * @created 2024-12-01
- * @lastModified 2024-12-15
+ * @lastModified 2024-12-18
  *
  * @changelog
  * <ul>
@@ -25,6 +25,7 @@ import java.util.List;
  *   <li>2024-12-07: 동아리 및 보고서 관리 리스트 추가, 관련 메소드 구현 (한승규)</li>
  *   <li>2024-12-08: 데이터 저장 및 불러오기 메서드 구현 (한승규)</li>
  *   <li>2024-12-15: GUI를 위한 문자열 반환 메서드 추가 (한승규)</li>
+ *   <li>2024-12-18: 활동 보고서 조회 기능 강화 및 GUI 연동 메서드 추가 (한승규)</li>
  * </ul>
  */
 public class ClubManager {
@@ -254,6 +255,15 @@ public class ClubManager {
         StringBuilder sb = new StringBuilder("==== 동아리 목록 ====\n");
         for (Club club : clubs) {
             sb.append(club.getDetails()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String viewReportsAsString() {
+        if (reports.isEmpty()) return "작성된 활동 보고서가 없습니다.";
+        StringBuilder sb = new StringBuilder("==== 활동 보고서 목록 ====\n");
+        for (ActivityReport report : reports) {
+            sb.append(report.getReportDetails()).append("\n");
         }
         return sb.toString();
     }
