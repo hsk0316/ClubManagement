@@ -12,7 +12,7 @@ import java.util.List;
  * </p>
  *
  * @author 한승규
- * @version 1.4.0
+ * @version 1.5.0
  * @since 2024-12-04
  *
  * @created 2024-12-01
@@ -247,7 +247,7 @@ public class ClubManager {
      *
      * @changelog
      * <ul>
-     *   <li>2024-12-15: GUI를 위한 메서드 추가 (한승규)</li>
+     *   <li>2024-12-15: 등록된 동아리 목록 GUI를 위한 메서드 추가 (한승규)</li>
      * </ul>
      */
     public String viewClubsAsString() {
@@ -259,6 +259,24 @@ public class ClubManager {
         return sb.toString();
     }
 
+    /**
+     * 등록된 활동 보고서를 문자열로 반환합니다.
+     *
+     * <p>
+     * GUI에서 사용하기 위한 문자열 형태의 활동 보고서 목록을 반환합니다.
+     * 등록된 보고서가 없으면 '작성된 활동 보고서가 없습니다.' 메시지를 반환합니다.
+     * </p>
+     *
+     * @return 활동 보고서 목록 문자열
+     *
+     * @created 2024-12-18
+     * @lastModified 2024-12-18
+     *
+     * @changelog
+     * <ul>
+     *     <li>2024-12-18: 등록된 활동 보고서 GUI를 위한 메서드 추가 (한승규)</li>
+     * </ul>
+     */
     public String viewReportsAsString() {
         if (reports.isEmpty()) return "작성된 활동 보고서가 없습니다.";
         StringBuilder sb = new StringBuilder("==== 활동 보고서 목록 ====\n");

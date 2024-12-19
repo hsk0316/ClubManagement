@@ -11,17 +11,18 @@ import java.awt.event.ActionEvent;
  * </p>
  *
  * @author 한승규
- * @version 1.2.0
+ * @version 1.3.0
  * @since 2024-12-15
  *
  * @created 2024-12-15
- * @lastModified 2024-12-18
+ * @lastModified 2024-12-19
  *
  * @changelog
  * <ul>
  *   <li>2024-12-15: 최초 생성 및 기본 GUI 구현, 동아리 등록, 조회, 저장, 불러오기 버튼 추가 (한승규)</li>
  *   <li>2024-12-16: 프로그램 종료 버튼 추가 및 GUI 개선 (한승규)</li>
  *   <li>2024-12-18: 활동 보고서 작성 및 조회 기능 추가, GUI 확장 (한승규)</li>
+ *   <li>2024-12-19: 버튼 레이아웃 변경, GUI 배치 개선 (한승규)</li>
  * </ul>
  */
 public class ClubManagementGUI {
@@ -42,7 +43,7 @@ public class ClubManagementGUI {
         this.clubManager = manager;
         frame = new JFrame("동아리 관리 프로그램");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
+        frame.setSize(600, 500);
 
         // GUI 컴포넌트 설정
         setupComponents();
@@ -58,7 +59,9 @@ public class ClubManagementGUI {
      * </p>
      */
     private void setupComponents() {
-        JPanel panel = new JPanel(new BorderLayout());
+        frame.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10); // 버튼 간 여백 설정
 
         // 버튼 추가
         JButton registerButton = new JButton("동아리 등록");
@@ -76,20 +79,29 @@ public class ClubManagementGUI {
         viewReportButton.addActionListener(this::viewReports);
         saveButton.addActionListener(e -> clubManager.saveData());
         loadButton.addActionListener(e -> clubManager.loadData());
-        exitButton.addActionListener(e -> System.exit(0)); // 프로그램 종료 버튼
+        exitButton.addActionListener(e -> System.exit(0));
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(registerButton);
-        buttonPanel.add(viewButton);
-        buttonPanel.add(addReportButton);
-        buttonPanel.add(viewReportButton);
-        buttonPanel.add(saveButton);
-        buttonPanel.add(loadButton);
-        buttonPanel.add(exitButton);
+        gbc.gridx = 0; gbc.gridy = 0;
+        frame.add(registerButton, gbc);
 
-        panel.add(buttonPanel, BorderLayout.NORTH);
+        gbc.gridx = 1; gbc.gridy = 0;
+        frame.add(viewButton, gbc);
 
-        frame.add(panel);
+        gbc.gridx = 0; gbc.gridy = 1;
+        frame.add(addReportButton, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 1;
+        frame.add(viewReportButton, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        frame.add(saveButton, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 2;
+        frame.add(loadButton, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridwidth = 2; // 두 칸 차지
+        frame.add(exitButton, gbc);
     }
 
     /**
