@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
+
 
 /**
  * 동아리 관리 프로그램
@@ -12,11 +14,11 @@ import java.util.List;
  * </p>
  *
  * @author 한승규
- * @version 1.5.0
+ * @version 1.5.1
  * @since 2024-12-04
  *
  * @created 2024-12-01
- * @lastModified 2024-12-18
+ * @lastModified 2024-12-20
  *
  * @changelog
  * <ul>
@@ -26,6 +28,7 @@ import java.util.List;
  *   <li>2024-12-08: 데이터 저장 및 불러오기 메서드 구현 (한승규)</li>
  *   <li>2024-12-15: GUI를 위한 문자열 반환 메서드 추가 (한승규)</li>
  *   <li>2024-12-18: 활동 보고서 조회 기능 강화 및 GUI 연동 메서드 추가 (한승규)</li>
+ *   <li>2024-12-20: 예외 처리 강화 (한승규)</li>
  * </ul>
  */
 public class ClubManager {
@@ -180,12 +183,13 @@ public class ClubManager {
      * </p>
      *
      * @created 2024-12-08
-     * @lastModified 2024-12-15
+     * @lastModified 2024-12-20
      *
      * @changelog
      * <ul>
      *   <li>2024-12-08: 데이터 저장 메서드 구현 (한승규)</li>
      *   <li>2024-12-15: GUI 연동 추가 (한승규)</li>
+     *   <li>2024-12-20: 예외처리 (한승규)</li>
      * </ul>
      */
     public void saveData() {
@@ -197,6 +201,8 @@ public class ClubManager {
             System.out.println("데이터가 성공적으로 저장되었습니다.");
         } catch (IOException e) {
             System.err.println("데이터 저장 중 오류가 발생했습니다: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "데이터 저장 중 오류가 발생했습니다.\n오류 내용: " + e.getMessage(),
+                    "저장 실패", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -209,11 +215,12 @@ public class ClubManager {
      * </p>
      *
      * @created 2024-12-08
-     * @lastModified 2024-12-08
+     * @lastModified 2024-12-20
      *
      * @changelog
      * <ul>
      *   <li>2024-12-08: 데이터 불러오기 메서드 구현 (한승규)</li>
+     *   <li>2024-12-20: 예외처리 (한승규)</li>
      * </ul>
      */
     public void loadData() {
@@ -229,6 +236,8 @@ public class ClubManager {
             System.out.println("저장된 데이터 파일이 없습니다. 새로 시작합니다.");
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("데이터 불러오기 중 오류가 발생했습니다: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "데이터 불러오기 중 오류가 발생했습니다.\n오류 내용: " + e.getMessage(),
+                    "불러오기 실패", JOptionPane.ERROR_MESSAGE);
         }
     }
 
