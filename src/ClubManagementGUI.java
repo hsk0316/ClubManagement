@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 동아리 관리 프로그램 GUI 클래스
@@ -11,11 +13,11 @@ import java.awt.event.ActionEvent;
  * </p>
  *
  * @author 한승규
- * @version 1.3.0
+ * @version 1.4.0
  * @since 2024-12-15
  *
  * @created 2024-12-15
- * @lastModified 2024-12-19
+ * @lastModified 2024-12-21
  *
  * @changelog
  * <ul>
@@ -23,6 +25,7 @@ import java.awt.event.ActionEvent;
  *   <li>2024-12-16: 프로그램 종료 버튼 추가 및 GUI 개선 (한승규)</li>
  *   <li>2024-12-18: 활동 보고서 작성 및 조회 기능 추가, GUI 확장 (한승규)</li>
  *   <li>2024-12-19: 버튼 레이아웃 변경, GUI 배치 개선 (한승규)</li>
+ *   <li>2024-12-21: 활동 보고서 검색 기능 추가 (한승규)</li>
  * </ul>
  */
 public class ClubManagementGUI {
@@ -55,8 +58,12 @@ public class ClubManagementGUI {
      * GUI 컴포넌트를 초기화하고 설정합니다.
      *
      * <p>
-     * 버튼 및 패널을 생성하고, 각 버튼에 이벤트를 연결합니다.
+     * 동아리 등록, 조회, 활동 보고서 작성, 검색, 데이터 저장 및 불러오기 버튼을 생성하고,
+     * 각 버튼에 이벤트를 연결합니다. GridBagLayout을 사용하여 버튼의 위치를 조정합니다.
      * </p>
+     *
+     * @created 2024-12-15
+     * @lastModified 2024-12-21
      */
     private void setupComponents() {
         frame.setLayout(new GridBagLayout());
@@ -71,6 +78,7 @@ public class ClubManagementGUI {
         JButton saveButton = new JButton("데이터 저장");
         JButton loadButton = new JButton("데이터 불러오기");
         JButton exitButton = new JButton("프로그램 종료");
+        JButton searchReportButton = new JButton("활동 보고서 검색");
 
         // 버튼 이벤트 추가
         registerButton.addActionListener(this::registerClub);
@@ -80,6 +88,7 @@ public class ClubManagementGUI {
         saveButton.addActionListener(e -> clubManager.saveData());
         loadButton.addActionListener(e -> clubManager.loadData());
         exitButton.addActionListener(e -> System.exit(0));
+        searchReportButton.addActionListener(this::searchReports);
 
         gbc.gridx = 0; gbc.gridy = 0;
         frame.add(registerButton, gbc);
@@ -100,7 +109,10 @@ public class ClubManagementGUI {
         frame.add(loadButton, gbc);
 
         gbc.gridx = 0; gbc.gridy = 3;
-        gbc.gridwidth = 2; // 두 칸 차지
+        frame.add(searchReportButton, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridwidth = 2;
         frame.add(exitButton, gbc);
     }
 
@@ -186,5 +198,42 @@ public class ClubManagementGUI {
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new ClubManagementGUI(new ClubManager()));
+    }
+
+    /**
+     * 활동 보고서 검색 이벤트 핸들러
+     *
+     * <p>
+     * 사용자가 활동 보고서 검색 버튼을 클릭하면 검색 방식을 선택하고, 키워드 또는 날짜로 검색합니다.
+     * 검색 결과를 텍스트 영역에 표시하며, 결과가 없을 경우 적절한 메시지를 출력합니다.
+     * </p>
+     *
+     * @param e ActionEvent 객체
+     * @created 2024-12-21
+     */
+    private void searchReports(ActionEvent e) {
+        String[] options = {"키워드로 검색", "날짜로 검색"};
+        int choice = JOptionPane.showOptionDialog(frame, "검색 방식을 선택하세요:", "활동 보고서 검색",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+        List<ActivityReport> results = new ArrayList<>();
+        if (choice == 0) {
+            String keyword = JOptionPane.showInputDialog("검색할 키워드를 입력하세요:");
+            results = clubManager.searchReportsByKeyword(keyword);
+        } else if (choice == 1) {
+            String date = JOptionPane.showInputDialog("검색할 날짜를 입력하세요 (예: 2024-12-19):");
+            results = clubManager.searchReportsByDate(date);
+        }
+
+        if (results.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "검색 결과가 없습니다.", "검색 결과", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JTextArea textArea = new JTextArea(20, 40);
+            for (ActivityReport report : results) {
+                textArea.append(report.getReportDetails() + "\n");
+            }
+            textArea.setEditable(false);
+            JOptionPane.showMessageDialog(frame, new JScrollPane(textArea), "검색 결과", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 }

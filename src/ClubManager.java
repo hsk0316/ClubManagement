@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import java.util.stream.Collectors;
 
 
 /**
@@ -9,16 +10,16 @@ import javax.swing.JOptionPane;
  *
  * <p>
  * 이 클래스는 동아리와 활동 보고서를 관리하는 역할을 합니다.
- * 동아리 등록, 조회, 활동 보고서 작성 및 조회, 데이터 저장/불러오기 기능을 제공합니다.
+ * 동아리 등록, 조회, 활동 보고서 작성 및 조회, 데이터 저장/불러오기, 활동 보고서 검색 기능을 제공합니다.
  * GUI를 위한 텍스트 데이터를 반환하는 메서드도 추가되었습니다.
  * </p>
  *
  * @author 한승규
- * @version 1.5.1
+ * @version 1.7.0
  * @since 2024-12-04
  *
  * @created 2024-12-01
- * @lastModified 2024-12-20
+ * @lastModified 2024-12-21
  *
  * @changelog
  * <ul>
@@ -29,6 +30,7 @@ import javax.swing.JOptionPane;
  *   <li>2024-12-15: GUI를 위한 문자열 반환 메서드 추가 (한승규)</li>
  *   <li>2024-12-18: 활동 보고서 조회 기능 강화 및 GUI 연동 메서드 추가 (한승규)</li>
  *   <li>2024-12-20: 예외 처리 강화 (한승규)</li>
+ *   <li>2024-12-21: 활동 보고서 검색 기능 추가 (한승규)</li>
  * </ul>
  */
 public class ClubManager {
@@ -289,6 +291,77 @@ public class ClubManager {
     public String viewReportsAsString() {
         if (reports.isEmpty()) return "작성된 활동 보고서가 없습니다.";
         StringBuilder sb = new StringBuilder("==== 활동 보고서 목록 ====\n");
+        for (ActivityReport report : reports) {
+            sb.append(report.getReportDetails()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 키워드로 활동 보고서를 검색합니다.
+     *
+     * <p>
+     * 활동 보고서 내용에 특정 키워드가 포함된 보고서를 반환합니다.
+     * 검색 결과는 리스트 형태로 반환되며, 결과가 없을 경우 빈 리스트를 반환합니다.
+     * </p>
+     *
+     * @param keyword 검색할 키워드
+     * @return 키워드가 포함된 활동 보고서 리스트
+     *
+     * @created 2024-12-21
+     *
+     * @changelog
+     * <ul>
+     *   <li>2024-12-21: 키워드 검색 기능 추가 (한승규)</li>
+     * </ul>
+     */
+    public List<ActivityReport> searchReportsByKeyword(String keyword) {
+        return reports.stream()
+                .filter(report -> report.getContent().contains(keyword))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 날짜로 활동 보고서를 검색합니다.
+     *
+     * <p>
+     * 특정 날짜에 작성된 활동 보고서를 반환합니다.
+     * 검색 결과는 리스트 형태로 반환되며, 결과가 없을 경우 빈 리스트를 반환합니다.
+     * </p>
+     *
+     * @param date 검색할 날짜 (예: "2024-12-21")
+     * @return 해당 날짜에 작성된 활동 보고서 리스트
+     *
+     * @created 2024-12-21
+     *
+     * @changelog
+     * <ul>
+     *   <li>2024-12-21: 날짜 검색 기능 추가 (한승규)</li>
+     * </ul>
+     */
+    public List<ActivityReport> searchReportsByDate(String date) {
+        return reports.stream()
+                .filter(report -> report.getDate().equals(date))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 검색 결과를 문자열로 반환합니다.
+     *
+     * <p>
+     * 검색 결과를 텍스트로 표시하기 위해 리스트 형태의 활동 보고서를 문자열로 변환합니다.
+     * </p>
+     *
+     * @param reports 검색된 활동 보고서 리스트
+     * @return 검색 결과 문자열
+     *
+     * @created 2024-12-21
+     */
+    public String formatReportSearchResults(List<ActivityReport> reports) {
+        if (reports.isEmpty()) {
+            return "검색 결과가 없습니다.";
+        }
+        StringBuilder sb = new StringBuilder("==== 검색 결과 ====\n");
         for (ActivityReport report : reports) {
             sb.append(report.getReportDetails()).append("\n");
         }
