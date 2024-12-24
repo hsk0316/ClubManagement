@@ -10,16 +10,16 @@ import java.util.stream.Collectors;
  *
  * <p>
  * 이 클래스는 동아리와 활동 보고서를 관리하는 역할을 합니다.
- * 동아리 등록, 조회, 활동 보고서 작성 및 조회, 데이터 저장/불러오기, 활동 보고서 검색 기능을 제공합니다.
- * GUI를 위한 텍스트 데이터를 반환하는 메서드도 추가되었습니다.
+ * 동아리 등록, 조회, 활동 보고서 작성 및 조회, 데이터 저장/불러오기,
+ * 활동 보고서 검색, 보고서 통계 및 특정 기간 내 검색 기능을 제공합니다.
  * </p>
  *
  * @author 한승규
- * @version 1.7.0
+ * @version 1.8.0
  * @since 2024-12-04
  *
  * @created 2024-12-01
- * @lastModified 2024-12-21
+ * @lastModified 2024-12-24
  *
  * @changelog
  * <ul>
@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
  *   <li>2024-12-18: 활동 보고서 조회 기능 강화 및 GUI 연동 메서드 추가 (한승규)</li>
  *   <li>2024-12-20: 예외 처리 강화 (한승규)</li>
  *   <li>2024-12-21: 활동 보고서 검색 기능 추가 (한승규)</li>
+ *   <li>2024-12-24: 보고서 통계 및 특정 기간 검색 기능 추가 (한승규)</li>
  * </ul>
  */
 public class ClubManager {
@@ -137,11 +138,12 @@ public class ClubManager {
      *   <li>2024-12-07: 리스트에 보고서 추가 로직 작성 (한승규)</li>
      * </ul>
      */
-    public void addReport(String clubName, String activityContent) {
+    public void addDetailedReport(String clubName, String activityContent, String author, String location, String result, String date) {
+        ActivityReport report = new ActivityReport(clubName, activityContent, author, location, result, date);
         for (Club club : clubs) {
             if (club.getName().equals(clubName)) {
-                reports.add(new ActivityReport(clubName, activityContent));
-                System.out.println("활동 보고서가 작성되었습니다.");
+                reports.add(new ActivityReport(clubName, activityContent, author, location, result, java.time.LocalDate.now().toString()));
+                System.out.println("상세 활동 보고서가 작성되었습니다.");
                 return;
             }
         }
@@ -366,5 +368,45 @@ public class ClubManager {
             sb.append(report.getReportDetails()).append("\n");
         }
         return sb.toString();
+    }
+
+    /**
+     * 총 활동 보고서 수를 반환합니다.
+     *
+     * @return 등록된 활동 보고서의 총 개수
+     * @created 2024-12-24
+     */
+    public int getTotalReportsCount() {
+        return reports.size();
+    }
+
+    /**
+     * 특정 동아리의 보고서 수를 반환합니다.
+     *
+     * @param clubName 동아리 이름
+     * @return 해당 동아리의 보고서 개수
+     * @created 2024-12-24
+     */
+    public int getReportsByClub(String clubName) {
+        return (int) reports.stream()
+                .filter(report -> report.getClubName().equals(clubName))
+                .count();
+    }
+
+    /**
+     * 특정 기간 동안 작성된 보고서를 반환합니다.
+     *
+     * @param startDate 시작 날짜 (YYYY-MM-DD)
+     * @param endDate 종료 날짜 (YYYY-MM-DD)
+     * @return 해당 기간 동안 작성된 보고서 리스트
+     * @created 2024-12-24
+     */
+    public List<ActivityReport> getReportsInDateRange(String startDate, String endDate) {
+        return reports.stream()
+                .filter(report -> {
+                    String date = report.getDate();
+                    return date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0;
+                })
+                .collect(Collectors.toList());
     }
 }

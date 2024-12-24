@@ -7,14 +7,15 @@ import javax.swing.SwingUtilities;
  * <p>
  * 이 클래스는 프로그램의 진입점 역할을 하며, GUI와 콘솔을 통해 사용자와 상호작용하는 메뉴를 제공합니다.
  * 프로그램 시작과 종료 시 데이터를 자동으로 저장하고 불러오는 기능을 포함합니다.
+ * GUI는 Swing을 사용하며, 콘솔 인터페이스는 기본적인 메뉴 기반으로 동작합니다.
  * </p>
  *
  * @author 한승규
- * @version 1.3.0
+ * @version 1.4.0
  * @since 2024-12-04
  *
  * @created 2024-12-04
- * @lastModified 2024-12-15
+ * @lastModified 2024-12-22
  *
  * @changelog
  * <ul>
@@ -22,6 +23,7 @@ import javax.swing.SwingUtilities;
  *   <li>2024-12-05: 메소드 세부 구현 (한승규)</li>
  *   <li>2024-12-08: 프로그램 시작 및 종료 시 데이터 자동 저장/불러오기 추가 (한승규)</li>
  *   <li>2024-12-15: Swing GUI 통합 및 SwingUtilities 활용 (한승규)</li>
+ *   <li>2024-12-22: 활동 보고서 작성 기능 개선 및 날짜 입력 지원 추가 (한승규)</li>
  * </ul>
  */
 public class Main {
@@ -39,7 +41,15 @@ public class Main {
      * @param args 명령행 인자를 전달받는 배열
      *
      * @created 2024-12-04
-     * @lastModified 2024-12-15
+     * @lastModified 2024-12-22
+     *
+     * @changelog
+     * <ul>
+     *   <li>2024-12-04: 최초 생성 (한승규)</li>
+     *   <li>2024-12-08: 데이터 자동 저장 및 불러오기 추가 (한승규)</li>
+     *   <li>2024-12-15: Swing GUI 통합 및 실행 (한승규)</li>
+     *   <li>2024-12-22: 활동 보고서 작성 기능 개선 (한승규)</li>
+     * </ul>
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new ClubManagementGUI(clubManager)); // GUI 실행
@@ -155,7 +165,22 @@ public class Main {
         System.out.print("활동 내용: ");
         String activityContent = scanner.nextLine();
 
-        clubManager.addReport(clubName, activityContent);
+        System.out.print("작성자: ");
+        String author = scanner.nextLine();
+
+        System.out.print("활동 위치: ");
+        String location = scanner.nextLine();
+
+        System.out.print("활동 결과: ");
+        String result = scanner.nextLine();
+
+        System.out.print("활동 날짜 (YYYY-MM-DD): ");
+        String date = scanner.nextLine();
+        if (date == null || date.isBlank()) {
+            date = java.time.LocalDate.now().toString(); // 현재 날짜로 설정
+        }
+
+        clubManager.addDetailedReport(clubName, activityContent, author, location, result, date);
         System.out.println("활동 보고서가 작성되었습니다.");
     }
 

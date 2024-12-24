@@ -13,11 +13,11 @@ import java.util.List;
  * </p>
  *
  * @author 한승규
- * @version 1.4.0
+ * @version 1.6.0
  * @since 2024-12-15
  *
  * @created 2024-12-15
- * @lastModified 2024-12-21
+ * @lastModified 2024-12-24
  *
  * @changelog
  * <ul>
@@ -26,6 +26,7 @@ import java.util.List;
  *   <li>2024-12-18: 활동 보고서 작성 및 조회 기능 추가, GUI 확장 (한승규)</li>
  *   <li>2024-12-19: 버튼 레이아웃 변경, GUI 배치 개선 (한승규)</li>
  *   <li>2024-12-21: 활동 보고서 검색 기능 추가 (한승규)</li>
+ *   <li>2024-12-24: 보고서 통계 기능 추가 및 버튼 연동 (한승규)</li>
  * </ul>
  */
 public class ClubManagementGUI {
@@ -59,11 +60,19 @@ public class ClubManagementGUI {
      *
      * <p>
      * 동아리 등록, 조회, 활동 보고서 작성, 검색, 데이터 저장 및 불러오기 버튼을 생성하고,
-     * 각 버튼에 이벤트를 연결합니다. GridBagLayout을 사용하여 버튼의 위치를 조정합니다.
+     * 각 버튼에 이벤트를 연결합니다. 또한, 보고서 통계 버튼을 추가하여 활동 보고서에 대한 통계를 확인할 수 있는 기능을 제공합니다.
+     * GridBagLayout을 사용하여 버튼의 위치를 조정하고, 사용자 인터페이스를 구성합니다.
      * </p>
      *
      * @created 2024-12-15
-     * @lastModified 2024-12-21
+     * @lastModified 2024-12-24
+     *
+     * @changelog
+     * <ul>
+     *   <li>2024-12-15: 기본 GUI 버튼 구성 (한승규)</li>
+     *   <li>2024-12-21: 활동 보고서 검색 버튼 추가 (한승규)</li>
+     *   <li>2024-12-24: 보고서 통계 버튼 추가 (한승규)</li>
+     * </ul>
      */
     private void setupComponents() {
         frame.setLayout(new GridBagLayout());
@@ -79,6 +88,7 @@ public class ClubManagementGUI {
         JButton loadButton = new JButton("데이터 불러오기");
         JButton exitButton = new JButton("프로그램 종료");
         JButton searchReportButton = new JButton("활동 보고서 검색");
+        JButton viewStatsButton = new JButton("보고서 통계");
 
         // 버튼 이벤트 추가
         registerButton.addActionListener(this::registerClub);
@@ -89,6 +99,7 @@ public class ClubManagementGUI {
         loadButton.addActionListener(e -> clubManager.loadData());
         exitButton.addActionListener(e -> System.exit(0));
         searchReportButton.addActionListener(this::searchReports);
+        viewStatsButton.addActionListener(this::viewStats);
 
         gbc.gridx = 0; gbc.gridy = 0;
         frame.add(registerButton, gbc);
@@ -167,9 +178,15 @@ public class ClubManagementGUI {
     private void addReport(ActionEvent e) {
         String clubName = JOptionPane.showInputDialog("동아리 이름:");
         String activityContent = JOptionPane.showInputDialog("활동 내용:");
-        clubManager.addReport(clubName, activityContent);
+        String author = JOptionPane.showInputDialog("작성자 이름:");
+        String location = JOptionPane.showInputDialog("활동 위치:");
+        String result = JOptionPane.showInputDialog("활동 결과:");
+        String date = JOptionPane.showInputDialog("활동 날짜 (YYYY-MM-DD):");
+
+        clubManager.addDetailedReport(clubName, activityContent, author, location, result, date);
         JOptionPane.showMessageDialog(frame, "활동 보고서가 작성되었습니다!");
     }
+
 
     /**
      * 활동 보고서 조회 이벤트 핸들러
@@ -235,5 +252,28 @@ public class ClubManagementGUI {
             textArea.setEditable(false);
             JOptionPane.showMessageDialog(frame, new JScrollPane(textArea), "검색 결과", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    private void viewStats(ActionEvent e) {
+        StringBuilder stats = new StringBuilder();
+        stats.append("총 보고서 수: ").append(clubManager.getTotalReportsCount()).append("\n");
+
+        String clubName = JOptionPane.showInputDialog("특정 동아리 이름을 입력하세요 (선택 사항):");
+        if (clubName != null && !clubName.isEmpty()) {
+            stats.append("동아리 '").append(clubName).append("'의 보고서 수: ")
+                    .append(clubManager.getReportsByClub(clubName)).append("\n");
+        }
+
+        String startDate = JOptionPane.showInputDialog("시작 날짜를 입력하세요 (YYYY-MM-DD):");
+        String endDate = JOptionPane.showInputDialog("종료 날짜를 입력하세요 (YYYY-MM-DD):");
+        if (startDate != null && endDate != null) {
+            List<ActivityReport> filteredReports = clubManager.getReportsInDateRange(startDate, endDate);
+            stats.append("기간 ").append(startDate).append(" ~ ").append(endDate).append(" 동안 보고서 수: ")
+                    .append(filteredReports.size()).append("\n");
+        }
+
+        JTextArea textArea = new JTextArea(stats.toString());
+        textArea.setEditable(false);
+        JOptionPane.showMessageDialog(frame, new JScrollPane(textArea), "보고서 통계", JOptionPane.INFORMATION_MESSAGE);
     }
 }

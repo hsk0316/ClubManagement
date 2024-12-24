@@ -51,6 +51,7 @@ public class ActivityReport implements Serializable {
         this.author = author;
         this.location = location;
         this.result = result;
+        this.date = date;
         this.date = getCurrentDate();
     }
 
