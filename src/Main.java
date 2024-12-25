@@ -193,7 +193,8 @@ public class Main {
      */
     private static void viewReports() {
         System.out.println("[활동 보고서 조회]");
-        clubManager.viewReports();
+        String reports = clubManager.viewReportsAsString();
+        System.out.println(reports);
     }
 
     /**
@@ -220,4 +221,3 @@ public class Main {
         clubManager.loadData();
     }
 }
-

@@ -122,6 +122,9 @@ public class ClubManagementGUI {
         gbc.gridx = 0; gbc.gridy = 3;
         frame.add(searchReportButton, gbc);
 
+        gbc.gridx = 1; gbc.gridy = 3;
+        frame.add(viewStatsButton, gbc);
+
         gbc.gridx = 0; gbc.gridy = 4;
         gbc.gridwidth = 2;
         frame.add(exitButton, gbc);

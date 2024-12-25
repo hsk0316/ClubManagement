@@ -1,8 +1,6 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.swing.JOptionPane;
-import java.util.stream.Collectors;
 
 
 /**
@@ -15,11 +13,11 @@ import java.util.stream.Collectors;
  * </p>
  *
  * @author 한승규
- * @version 1.8.0
+ * @version 1.9.0
  * @since 2024-12-04
  *
  * @created 2024-12-01
- * @lastModified 2024-12-24
+ * @lastModified 2024-12-25
  *
  * @changelog
  * <ul>
@@ -32,11 +30,12 @@ import java.util.stream.Collectors;
  *   <li>2024-12-20: 예외 처리 강화 (한승규)</li>
  *   <li>2024-12-21: 활동 보고서 검색 기능 추가 (한승규)</li>
  *   <li>2024-12-24: 보고서 통계 및 특정 기간 검색 기능 추가 (한승규)</li>
+ *   <li>2024-12-25: 활동 보고서 HashMap 구조 적용 및 메서드 수정 (한승규)</li>
  * </ul>
  */
 public class ClubManager {
     private final List<Club> clubs = new ArrayList<>(); // 동아리 목록
-    private final List<ActivityReport> reports = new ArrayList<>(); // 활동 보고서 목록
+    private final HashMap<String, List<ActivityReport>> reports = new HashMap<>(); // 활동 보고서 목록
 
     private static final String CLUBS_FILE = "clubs.dat"; // 동아리 데이터 저장 파일
     private static final String REPORTS_FILE = "reports.dat"; // 보고서 데이터 저장 파일
@@ -78,16 +77,24 @@ public class ClubManager {
      * @param purpose 설립 목적
      *
      * @created 2024-12-04
-     * @lastModified 2024-12-15
+     * @lastModified 2024-12-25
      *
      * @changelog
      * <ul>
      *   <li>2024-12-04: 동아리 등록 메소드 추가 (한승규)</li>
      *   <li>2024-12-15: 데이터 관리 리스트 업데이트 (한승규)</li>
+     *   <li>2024-12-25: 메소드 호환 수정 (한승규)</li>
      * </ul>
      */
     public void registerClub(String name, String advisor, int memberCount, String purpose) {
+        for (Club club : clubs) {
+            if (club.getName().equals(name)) {
+                System.out.println("이미 등록된 동아리입니다: " + name);
+                return;
+            }
+        }
         clubs.add(new Club(name, advisor, memberCount, purpose));
+        reports.put(name, new ArrayList<>()); // 새로운 동아리의 활동 보고서 리스트 초기화
         System.out.println("동아리가 등록되었습니다: " + name);
     }
 
@@ -128,26 +135,52 @@ public class ClubManager {
      *
      * @param clubName 동아리 이름
      * @param activityContent 활동 내용
-     *
-     * @created 2024-12-04
-     * @lastModified 2024-12-07
+     * @param author 작성자
+     * @param location 활동 위치
+     * @param result 활동 결과
+     * @param date 작성 날짜 (YYYY-MM-DD)
+     * @created 2024-12-07
+     * @lastModified 2024-12-25
      *
      * @changelog
      * <ul>
      *   <li>2024-12-04: 활동 보고서 작성 메소드 추가 (한승규)</li>
      *   <li>2024-12-07: 리스트에 보고서 추가 로직 작성 (한승규)</li>
+     *   <li>2024-12-25: HashMap 구조로 수정 (한승규)</li>
      * </ul>
      */
     public void addDetailedReport(String clubName, String activityContent, String author, String location, String result, String date) {
-        ActivityReport report = new ActivityReport(clubName, activityContent, author, location, result, date);
-        for (Club club : clubs) {
-            if (club.getName().equals(clubName)) {
-                reports.add(new ActivityReport(clubName, activityContent, author, location, result, java.time.LocalDate.now().toString()));
-                System.out.println("상세 활동 보고서가 작성되었습니다.");
-                return;
-            }
+        if (!reports.containsKey(clubName)) {
+            System.out.println("동아리를 찾을 수 없습니다: " + clubName);
+            return;
         }
-        System.out.println("동아리를 찾을 수 없습니다: " + clubName);
+        ActivityReport report = new ActivityReport(clubName, activityContent, author, location, result, date);
+        reports.get(clubName).add(report); // 동아리별로 보고서 추가
+        System.out.println("활동 보고서가 작성되었습니다.");
+    }
+
+    /**
+     * 특정 동아리의 활동 보고서를 조회합니다.
+     *
+     * <p>
+     * 특정 동아리에 작성된 활동 보고서를 출력합니다.
+     * 동아리 이름이 잘못되었거나 보고서가 없으면 적절한 메시지를 출력합니다.
+     * </p>
+     *
+     * @param clubName 조회할 동아리 이름
+     *
+     * @created 2024-12-25
+     */
+    public void viewReportsByClub(String clubName) {
+        List<ActivityReport> clubReports = reports.get(clubName);
+        if (clubReports == null || clubReports.isEmpty()) {
+            System.out.println("해당 동아리에 대한 보고서가 없습니다: " + clubName);
+            return;
+        }
+        System.out.println("==== " + clubName + " 보고서 목록 ====");
+        for (ActivityReport report : clubReports) {
+            System.out.println(report.getReportDetails());
+        }
     }
 
     /**
@@ -159,22 +192,22 @@ public class ClubManager {
      * </p>
      *
      * @created 2024-12-04
-     * @lastModified 2024-12-07
+     * @lastModified 2024-12-25
      *
      * @changelog
      * <ul>
      *   <li>2024-12-04: 활동 보고서 조회 메소드 추가 (한승규)</li>
      *   <li>2024-12-07: 리스트 출력 로직 추가 (한승규)</li>
+     *   <li>2024-12-07: 메소드와 호환 가능하게 변경 (한승규)</li>
      * </ul>
      */
-    public void viewReports() {
+    public void viewAllReports() {
         if (reports.isEmpty()) {
             System.out.println("작성된 활동 보고서가 없습니다.");
-        } else {
-            System.out.println("==== 활동 보고서 목록 ====");
-            for (ActivityReport report : reports) {
-                System.out.println(report.getReportDetails()); // `getReportDetails` 메서드 출력
-            }
+            return;
+        }
+        for (String clubName : reports.keySet()) {
+            viewReportsByClub(clubName);
         }
     }
 
@@ -187,13 +220,14 @@ public class ClubManager {
      * </p>
      *
      * @created 2024-12-08
-     * @lastModified 2024-12-20
+     * @lastModified 2024-12-25
      *
      * @changelog
      * <ul>
      *   <li>2024-12-08: 데이터 저장 메서드 구현 (한승규)</li>
      *   <li>2024-12-15: GUI 연동 추가 (한승규)</li>
      *   <li>2024-12-20: 예외처리 (한승규)</li>
+     *   <li>2024-12-25: 예외처리 (한승규)</li>
      * </ul>
      */
     public void saveData() {
@@ -230,11 +264,10 @@ public class ClubManager {
     public void loadData() {
         try (ObjectInputStream clubIn = new ObjectInputStream(new FileInputStream(CLUBS_FILE));
              ObjectInputStream reportIn = new ObjectInputStream(new FileInputStream(REPORTS_FILE))) {
-
             clubs.clear();
             reports.clear();
             clubs.addAll((List<Club>) clubIn.readObject());
-            reports.addAll((List<ActivityReport>) reportIn.readObject());
+            reports.putAll((HashMap<String, List<ActivityReport>>) reportIn.readObject());
             System.out.println("데이터가 성공적으로 불러와졌습니다.");
         } catch (FileNotFoundException e) {
             System.out.println("저장된 데이터 파일이 없습니다. 새로 시작합니다.");
@@ -292,10 +325,19 @@ public class ClubManager {
      */
     public String viewReportsAsString() {
         if (reports.isEmpty()) return "작성된 활동 보고서가 없습니다.";
+
         StringBuilder sb = new StringBuilder("==== 활동 보고서 목록 ====\n");
-        for (ActivityReport report : reports) {
-            sb.append(report.getReportDetails()).append("\n");
+        // HashMap의 모든 값(List<ActivityReport>)을 순회
+        for (Map.Entry<String, List<ActivityReport>> entry : reports.entrySet()) {
+            String clubName = entry.getKey(); // 동아리 이름
+            List<ActivityReport> reportList = entry.getValue(); // 해당 동아리의 보고서 리스트
+
+            sb.append("동아리: ").append(clubName).append("\n"); // 동아리 이름 추가
+            for (ActivityReport report : reportList) {
+                sb.append("  - ").append(report.getReportDetails()).append("\n");
+            }
         }
+
         return sb.toString();
     }
 
@@ -318,9 +360,15 @@ public class ClubManager {
      * </ul>
      */
     public List<ActivityReport> searchReportsByKeyword(String keyword) {
-        return reports.stream()
-                .filter(report -> report.getContent().contains(keyword))
-                .collect(Collectors.toList());
+        List<ActivityReport> results = new ArrayList<>();
+        for (List<ActivityReport> reportList : reports.values()) {
+            for (ActivityReport report : reportList) {
+                if (report.getContent().contains(keyword)) {
+                    results.add(report);
+                }
+            }
+        }
+        return results;
     }
 
     /**
@@ -342,9 +390,15 @@ public class ClubManager {
      * </ul>
      */
     public List<ActivityReport> searchReportsByDate(String date) {
-        return reports.stream()
-                .filter(report -> report.getDate().equals(date))
-                .collect(Collectors.toList());
+        List<ActivityReport> results = new ArrayList<>();
+        for (List<ActivityReport> reportList : reports.values()) {
+            for (ActivityReport report : reportList) {
+                if (report.getDate().equals(date)) {
+                    results.add(report);
+                }
+            }
+        }
+        return results;
     }
 
     /**
@@ -388,9 +442,11 @@ public class ClubManager {
      * @created 2024-12-24
      */
     public int getReportsByClub(String clubName) {
-        return (int) reports.stream()
-                .filter(report -> report.getClubName().equals(clubName))
-                .count();
+        List<ActivityReport> clubReports = reports.get(clubName);
+        if (clubReports == null) {
+            return 0; // 해당 동아리에 보고서가 없으면 0 반환
+        }
+        return clubReports.size();
     }
 
     /**
@@ -402,11 +458,15 @@ public class ClubManager {
      * @created 2024-12-24
      */
     public List<ActivityReport> getReportsInDateRange(String startDate, String endDate) {
-        return reports.stream()
-                .filter(report -> {
-                    String date = report.getDate();
-                    return date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0;
-                })
-                .collect(Collectors.toList());
+        List<ActivityReport> results = new ArrayList<>();
+        for (List<ActivityReport> reportList : reports.values()) {
+            for (ActivityReport report : reportList) {
+                String date = report.getDate();
+                if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
+                    results.add(report);
+                }
+            }
+        }
+        return results;
     }
 }
