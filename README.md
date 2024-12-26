@@ -44,7 +44,7 @@
 4. **프로그램 종료**
 
 ### 3.4 GUI 구성 이미지
-- ![GUI 구성 이미지](src/동아리 관리 프로그램 실행 이미지.drawio.png)
+- ![GUI 구성 이미지](src/club_management_gui.png)
 
 ## 4. 느낀점
 
